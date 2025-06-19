@@ -1,14 +1,11 @@
 """
 Nicholas M. Boffi
-3/20/25
+6/19/25
 
 Code for basic wandb visualization and logging.
 """
 
-import functools
-import signal
-import sys
-from typing import Callable, Dict, Tuple
+from typing import Dict, Tuple
 
 import jax
 import jax.numpy as jnp
@@ -20,34 +17,9 @@ from jax.flatten_util import ravel_pytree
 from matplotlib import pyplot as plt
 from ml_collections import config_dict
 
-from . import datasets, dist_utils, flow_map, state_utils, velocity
+from . import datasets, dist_utils, state_utils, velocity
 
 Parameters = Dict[str, Dict]
-
-
-def get_sampler(cfg: config_dict.ConfigDict) -> Callable:
-    if cfg.training.train_velocity:
-        return velocity.batch_sample
-    else:
-        return flow_map.batch_sample
-
-
-def _save_ckpt_on_signal(
-    cfg: config_dict.ConfigDict, train_state: state_utils.EMATrainState
-) -> None:
-    if jax.process_index() == 0:
-        save_state(train_state, cfg)
-    sys.exit(0)
-
-
-def register_signal_handlers(
-    cfg: config_dict.ConfigDict,
-    train_state: state_utils.EMATrainState,
-) -> None:
-    """Drop a checkpoint on SIGTERM or SIGINT."""
-    handler = functools.partial(_save_ckpt_on_signal, cfg, train_state)
-    signal.signal(signal.SIGTERM, handler)
-    signal.signal(signal.SIGINT, handler)
 
 
 def save_state(
@@ -66,8 +38,7 @@ def save_state(
 
 @jax.jit
 def compute_grad_norm(grads: Dict) -> float:
-    """Computes the norm of the gradient, where the gradient is input
-    as an hk.Params object (treated as a PyTree)."""
+    """Computes the norm of the gradient."""
     flat_params = ravel_pytree(grads)[0]
     return jnp.linalg.norm(flat_params)
 
@@ -121,8 +92,6 @@ def make_lowd_plot(
     train_state: state_utils.EMATrainState,
     prng_key: jnp.ndarray,
 ) -> None:
-    batch_sample = get_sampler(cfg)
-
     ## common plot parameters
     plt.close("all")
     sns.set_palette("deep")
@@ -141,7 +110,7 @@ def make_lowd_plot(
     prng_key = jax.random.split(prng_key)[0]
     xhats = np.zeros((len(steps), cfg.logging.plot_bs, cfg.problem.d))
     for kk, step in enumerate(steps):
-        xhats[kk] = batch_sample(
+        xhats[kk] = velocity.batch_sample(
             train_state.apply_fn,
             train_state.params,
             x0s,
@@ -208,8 +177,6 @@ def make_image_plot(
     prng_key: jnp.ndarray,
 ) -> None:
     """Make a plot of the generated images."""
-    batch_sample = get_sampler(cfg)
-
     ## common plot parameters
     plt.close("all")
     sns.set_palette("deep")
@@ -242,7 +209,7 @@ def make_image_plot(
         labels = None
 
     for kk, step in enumerate(steps):
-        xhats[kk] = batch_sample(
+        xhats[kk] = velocity.batch_sample(
             train_state.apply_fn,
             dist_utils.safe_unreplicate(cfg, train_state.params),
             x0s,
