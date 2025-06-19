@@ -33,6 +33,21 @@ class Interpolant:
     def calc_It_dot(self, t: float, x0: jnp.ndarray, x1: jnp.ndarray) -> jnp.ndarray:
         return self.alpha_dot(t) * x0 + self.beta_dot(t) * x1
 
+    def calc_target(
+        self, t: float, x0: jnp.ndarray, x1: jnp.ndarray, target_type: str
+    ) -> jnp.ndarray:
+        """Compute the target for learning."""
+        if target_type == "velocity":
+            return self.calc_It_dot(t, x0, x1)
+        elif target_type == "score":
+            return -x0 / self.alpha(t)
+        elif target_type == "noise":
+            return x0
+        elif target_type == "denoiser":
+            return x1
+        else:
+            raise ValueError(f"Target type {target_type} not recognized.")
+
     @functools.partial(jax.vmap, in_axes=(None, 0, 0, 0))
     def batch_calc_It(
         self, t: jnp.ndarray, x0: jnp.ndarray, x1: jnp.ndarray
@@ -44,6 +59,16 @@ class Interpolant:
         self, t: jnp.ndarray, x0: jnp.ndarray, x1: jnp.ndarray
     ) -> jnp.ndarray:
         return self.calc_It_dot(t, x0, x1)
+
+    @functools.partial(jax.vmap, in_axes=(None, 0, 0, 0, None))
+    def batch_calc_target(
+        self,
+        t: jnp.ndarray,
+        x0: jnp.ndarray,
+        x1: jnp.ndarray,
+        target_type: str,
+    ) -> jnp.ndarray:
+        return self.calc_target(t, x0, x1, target_type)
 
     def __hash__(self):
         return hash((self.alpha, self.beta))
