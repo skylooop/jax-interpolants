@@ -1,8 +1,9 @@
 """
 Nicholas M. Boffi
-4/12/24
+6/19/25
 
 Simple class for a Gaussian mixture model.
+Useful for running synthetic generative modeling experiments.
 """
 
 import jax
