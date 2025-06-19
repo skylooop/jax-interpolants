@@ -5,7 +5,7 @@ Nicholas M. Boffi
 Helper routines for neural network definitions.
 """
 
-from typing import Callable
+from typing import Callable, Dict, Tuple
 
 import flax.linen as nn
 import jax
@@ -13,6 +13,8 @@ import jax.numpy as jnp
 from ml_collections import config_dict
 
 from . import edm2_net as edm2_net
+
+Parameters = Dict[str, Dict]
 
 
 class MLP(nn.Module):
@@ -167,3 +169,30 @@ def setup_network(
         return EDM2Velocity(config=network_config)
     else:
         raise ValueError(f"Network type {network_config.network_type} not recognized.")
+
+
+def initialize_velocity(
+    network_config: config_dict.ConfigDict, ex_input: jnp.ndarray, prng_key: jnp.ndarray
+) -> Tuple[nn.Module, Parameters, jnp.ndarray]:
+    # define the network
+    net = setup_network(network_config)
+
+    # initialize the parameters
+    ex_t = 0.0
+    ex_label = 0
+    params = net.init(
+        {"params": prng_key},
+        ex_t,
+        ex_input,
+        ex_label,
+        train=False,
+        calc_weight=True,
+    )
+    prng_key = jax.random.split(prng_key)[0]
+
+    print(f"Number of parameters: {jax.flatten_util.ravel_pytree(params)[0].size}")
+
+    if network_config.network_type == "edm2":
+        params = edm2_net.project_to_sphere(params)
+
+    return net, params, prng_key

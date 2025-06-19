@@ -18,7 +18,7 @@ from flax.serialization import from_bytes
 from flax.training import train_state
 from ml_collections import config_dict
 
-from . import flow_map, interpolant, velocity
+from . import flow_map, interpolant, network_utils
 
 
 class EMATrainState(train_state.TrainState):
@@ -106,7 +106,7 @@ def setup_training_state(
     """Load flax training state."""
 
     # define and initialize the network
-    init_network = velocity.initialize_velocity
+    init_network = network_utils.initialize_velocity
     net, params, prng_key = init_network(cfg.network, ex_input, prng_key)
     ema_params = {ema_fac: deepcopy(params) for ema_fac in cfg.training.ema_facs}
 

@@ -1,60 +1,18 @@
 """
 Nicholas M. Boffi
-4/25/25
+6/29/25
 
-Basic routines for velocity class.
+Basic routines for sampling from a flow model.
 """
 
 import functools
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict
 
 import jax
 import jax.numpy as jnp
-from flax import linen as nn
-from ml_collections import config_dict
 
-from . import edm2_net, network_utils
 
 Parameters = Dict[str, Dict]
-
-
-class Velocity(nn.Module):
-    """Basic class for a velocity model.
-    Uses a two-time network for direct comparison to flow map models.
-    """
-
-    config: config_dict.ConfigDict
-
-    def setup(self):
-        """Set up the flow map."""
-        self.velocity = network_utils.setup_network(self.config)
-
-    def __call__(
-        self,
-        t: float,
-        x: jnp.ndarray,
-        label: float = None,
-        train: bool = True,
-        calc_weight: bool = False,
-    ) -> jnp.ndarray:
-        """Apply the flow map."""
-        return self.velocity(t, t, x, label, train, calc_weight)
-
-    def calc_b(
-        self,
-        t: float,
-        x: jnp.ndarray,
-        label: float = None,
-        train: bool = True,
-        calc_weight: bool = False,
-    ) -> jnp.ndarray:
-        """Compute the b term for the velocity."""
-        return self.velocity.calc_b(t, x, label, train, calc_weight)
-
-    def calc_weight(self, s: float, t: float) -> jnp.ndarray:
-        """Compute the weights for the flow map."""
-        del s
-        return self.velocity.calc_weight(t, t)
 
 
 def sample_euler(
@@ -111,30 +69,3 @@ def batch_sample(
 ) -> jnp.ndarray:
     """Batch unconditional sampling."""
     return sample(apply_velocity, variables, x0s, N, label)
-
-
-def initialize_velocity(
-    network_config: config_dict.ConfigDict, ex_input: jnp.ndarray, prng_key: jnp.ndarray
-) -> Tuple[nn.Module, Parameters, jnp.ndarray]:
-    # define the network
-    net = Velocity(network_config)
-
-    # initialize the parameters
-    ex_t = 0.0
-    ex_label = 0
-    params = net.init(
-        {"params": prng_key},
-        ex_t,
-        ex_input,
-        ex_label,
-        train=False,
-        calc_weight=True,
-    )
-    prng_key = jax.random.split(prng_key)[0]
-
-    print(f"Number of parameters: {jax.flatten_util.ravel_pytree(params)[0].size}")
-
-    if network_config.network_type == "edm2":
-        params = edm2_net.project_to_sphere(params)
-
-    return net, params, prng_key
