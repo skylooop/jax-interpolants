@@ -1,8 +1,8 @@
 """
 Nicholas M. Boffi
-3/20/25
+6/19/25
 
-Basic class for a stochastic interpolant.
+Standardized stochastic interpolant implementation.
 """
 
 import dataclasses
@@ -16,7 +16,11 @@ from ml_collections import config_dict
 
 @dataclasses.dataclass
 class Interpolant:
-    """Basic class for a stochastic interpolant"""
+    """Basic class for a stochastic interpolant, following the mathematical
+    description in https://arxiv.org/abs/2303.08797.
+    Assumes that the base distribution is a Gaussian, avoiding the need for
+    the \gamma term.
+    """
 
     alpha: Callable[[float], float]
     beta: Callable[[float], float]
@@ -63,7 +67,32 @@ def setup_interpolant(cfg: config_dict.ConfigDict) -> Interpolant:
             alpha_dot=lambda t: -0.5 * jnp.pi * jnp.sin(jnp.pi * t / 2),
             beta_dot=lambda t: 0.5 * jnp.pi * jnp.cos(jnp.pi * t / 2),
         )
+    elif cfg.problem.interpolant_type == "vp_diffusion":
+        return Interpolant(
+            alpha=lambda t: jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
+            beta=lambda t: jnp.exp(t - cfg.problem.tmax),
+            alpha_dot=lambda t: -jnp.exp(2 * (t - cfg.problem.tmax))
+            / np.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
+            beta_dot=lambda t: jnp.exp(t - cfg.problem.tmax),
+        )
+
+    elif cfg.problem.interpolant_type == "vp_diffusion_logscale":
+        return Interpolant(
+            alpha=lambda t: jnp.sqrt(1 - t**2),
+            beta=lambda t: t,
+            alpha_dot=lambda t: -t / jnp.sqrt(1 - t**2),
+            beta_dot=lambda t: 1,
+        )
+
+    elif cfg.problem.interpolant_type == "ve_diffusion":
+        return Interpolant(
+            alpha=lambda t: cfg.problem.tf - t,
+            beta=lambda t: 1,
+            alpha_dot=lambda t: -1,
+            beta_dot=lambda t: 0,
+        )
+
     else:
-        raise NotImplementedError("Interpolant type not implemented.")
+        raise ValueError(f"Interpolant type {cfg.interpolant_type} not recognized.")
 
     return interp
