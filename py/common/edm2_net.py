@@ -18,6 +18,13 @@ import numpy as np
 Parameters = Dict[str, Dict]
 
 
+def safe_project_to_sphere(cfg: config_dict.ConfigDict, params: Parameters):
+    if cfg.network.network_type == "edm2":
+        return project_to_sphere(params)
+    else:
+        return params
+
+
 @functools.partial(jax.pmap, axis_name="data")
 def pmap_project_to_sphere(params: dict):
     """Project parameter dictionary to sphere."""
