@@ -1,8 +1,9 @@
 """
 Nicholas M. Boffi
-3/20/25
+6/19/25
 
 Simple utilities for data parallelism.
+Supports multi-GPU and multi-host setups using JAX's distributed capabilities.
 """
 
 import os
@@ -10,7 +11,6 @@ import socket
 import subprocess
 from typing import Any, Tuple
 
-import jax
 import jax.distributed as jd
 import jax.numpy as jnp
 from flax.jax_utils import replicate, unreplicate
