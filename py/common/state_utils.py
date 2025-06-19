@@ -31,7 +31,6 @@ class StaticArgs(NamedTuple):
     net: nn.Module
     schedule: optax.Schedule
     loss: Callable
-    interp_loss: Callable
     get_loss_fn_args: Callable
     train_step: Callable
     update_ema_params: Callable

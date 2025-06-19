@@ -8,9 +8,9 @@ Loss functions for learning.
 import functools
 from typing import Callable, Dict
 
+import flax.linen as nn
 import jax
 import jax.numpy as jnp
-import flax.linen as nn
 from ml_collections import config_dict
 
 from . import interpolant as interpolant
@@ -64,9 +64,6 @@ def setup_loss(
     interp: interpolant.Interpolant,
 ) -> Callable:
     """Setup the loss functions."""
-
-    print(f"Setting up loss: {cfg.training.loss_type}")
-    print(f"Stopgrad type: {cfg.training.stopgrad_type}")
 
     @mean_reduce
     @functools.partial(jax.vmap, in_axes=(None, 0, 0, 0, 0, 0))
