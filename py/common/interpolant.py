@@ -72,7 +72,7 @@ def setup_interpolant(cfg: config_dict.ConfigDict) -> Interpolant:
             alpha=lambda t: jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
             beta=lambda t: jnp.exp(t - cfg.problem.tmax),
             alpha_dot=lambda t: -jnp.exp(2 * (t - cfg.problem.tmax))
-            / np.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
+            / jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
             beta_dot=lambda t: jnp.exp(t - cfg.problem.tmax),
         )
 
