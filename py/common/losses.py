@@ -10,6 +10,7 @@ from typing import Callable, Dict
 
 import jax
 import jax.numpy as jnp
+import flax.linen as nn
 from ml_collections import config_dict
 
 from . import interpolant as interpolant
@@ -41,7 +42,7 @@ def loss(
     rng: jnp.ndarray,
     *,
     interp: interpolant.Interpolant,
-    model: velocity.Velocity,
+    model: nn.Module,
     loss_type: str,
 ) -> float:
     """Loss for learning the drift field b."""

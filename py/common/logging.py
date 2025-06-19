@@ -17,7 +17,7 @@ from jax.flatten_util import ravel_pytree
 from matplotlib import pyplot as plt
 from ml_collections import config_dict
 
-from . import datasets, dist_utils, state_utils, velocity
+from . import datasets, dist_utils, state_utils, samplers
 
 Parameters = Dict[str, Dict]
 
@@ -110,7 +110,7 @@ def make_lowd_plot(
     prng_key = jax.random.split(prng_key)[0]
     xhats = np.zeros((len(steps), cfg.logging.plot_bs, cfg.problem.d))
     for kk, step in enumerate(steps):
-        xhats[kk] = velocity.batch_sample(
+        xhats[kk] = samplers.batch_sample(
             train_state.apply_fn,
             train_state.params,
             x0s,
@@ -209,7 +209,7 @@ def make_image_plot(
         labels = None
 
     for kk, step in enumerate(steps):
-        xhats[kk] = velocity.batch_sample(
+        xhats[kk] = samplers.batch_sample(
             train_state.apply_fn,
             dist_utils.safe_unreplicate(cfg, train_state.params),
             x0s,
@@ -266,27 +266,15 @@ def make_loss_fn_args_plot(
     loss_fn_args: Tuple,
 ) -> None:
     """Make a plot of the loss function arguments."""
-    if state_utils.use_velocity_loss(cfg, train_state):
-        # unpack the interpolant loss arguments
-        (
-            x0batch,
-            x1batch,
-            _,
-            tbatch,
-            _,
-        ) = dist_utils.unreplicate_loss_fn_args(cfg, loss_fn_args)
-        sbatch = tbatch
-    else:
-        # unpack the interpolant loss arguments
-        data_args = loss_fn_args[1:]
-        (x0batch, x1batch, _, sbatch, tbatch, _, _, _) = (
-            dist_utils.unreplicate_loss_fn_args(cfg, data_args)
-        )
+    del train_state
+
+    (x0batch, x1batch, _, tbatch, _) = dist_utils.unreplicate_loss_fn_args(
+        cfg, loss_fn_args
+    )
 
     # remove pmap reshaping
     x0batch = jnp.squeeze(x0batch)
     x1batch = jnp.squeeze(x1batch)
-    sbatch = jnp.squeeze(sbatch)
     tbatch = jnp.squeeze(tbatch)
 
     ## common plot parameters
@@ -300,9 +288,9 @@ def make_loss_fn_args_plot(
 
     ## set up plot array
     if "gmm" in cfg.problem.target or cfg.problem.target == "checker":
-        titles = [r"$x_0$", r"$x_1$", r"$x_t$", r"$(s, t)$"]
+        titles = [r"$x_0$", r"$x_1$", r"$x_t$", r"$(t, t)$"]
     else:
-        titles = [r"$(s, t)$"]
+        titles = [r"$(t, t)$"]
 
     ## construct the figure
     nrows = 1
@@ -347,8 +335,8 @@ def make_loss_fn_args_plot(
             elif jj == 2:
                 ax.scatter(xtbatch[:, 0], xtbatch[:, 1], s=0.1, alpha=0.5, marker="o")
             elif jj == 3:
-                ax.scatter(sbatch, tbatch, s=0.1, alpha=0.5, marker="o")
+                ax.scatter(tbatch, tbatch, s=0.1, alpha=0.5, marker="o")
         else:
-            ax.scatter(sbatch, tbatch, s=0.1, alpha=0.5, marker="o")
+            ax.scatter(tbatch, tbatch, s=0.1, alpha=0.5, marker="o")
 
     wandb.log({"loss_fn_args": wandb.Image(fig)})
