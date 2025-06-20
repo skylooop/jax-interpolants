@@ -1,3 +1,3 @@
 # jax-interpolants
 
-Repository for Lagrangian map matching / Lagrangian self-distillation.
+``jax`` implementation of the stochastic interpolant framework for generative modeling.
