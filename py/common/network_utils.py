@@ -128,7 +128,7 @@ class EDM2Velocity(nn.Module):
         train: bool = True,
         calc_weight: bool = False,
     ):
-        t, x, label = self.process_inputs(s, t, x, label)
+        t, x, label = self.process_inputs(t, x, label)
         rslt = self.net(t, x, label, train, calc_weight)
 
         if calc_weight:
