@@ -14,6 +14,7 @@ import flax.linen as nn
 import jax
 import jax.numpy as jnp
 import numpy as np
+from ml_collections import config_dict
 
 Parameters = Dict[str, Dict]
 
