@@ -59,7 +59,7 @@ def get_config(
     # logging config
     config.logging = ml_collections.ConfigDict()
     config.logging.plot_bs = 25000
-    config.logging.visual_freq = 2500
+    config.logging.visual_freq = 1000
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "jax-interpolants-debug"
     config.logging.wandb_name = f"mnist-debug"
