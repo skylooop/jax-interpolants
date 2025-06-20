@@ -59,14 +59,12 @@ def log_metrics(
     loss_value = dist_utils.safe_index(cfg, jnp.array(loss_value))
     step = dist_utils.safe_index(cfg, train_state.step)
     learning_rate = statics.schedule(step)
-    anneal_s = statics.anneal_schedule(step)
 
     wandb.log(
         {
             f"loss": loss_value,
             f"grad": compute_grad_norm(grads),
             f"learning_rate": learning_rate,
-            f"anneal_schedule": anneal_s,
             f"step_time": step_time,
         }
     )
