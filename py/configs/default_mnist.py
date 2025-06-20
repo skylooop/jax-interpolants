@@ -95,7 +95,7 @@ def get_config(
         "channel_mult": [1, 2, 4],
         "num_blocks": 3,
         "attn_resolutions": [],
-        "use_fourier": False,
+        "use_fourier": True,
     }
 
     return config
