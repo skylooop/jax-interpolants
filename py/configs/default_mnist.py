@@ -14,6 +14,8 @@ def get_config(
     # ensure jax.device_count works (weird issue with importlib)
     import jax
 
+    del slurm_id
+
     # setup overall config
     config = ml_collections.ConfigDict()
 
@@ -37,7 +39,7 @@ def get_config(
     config.problem.target = "mnist"
     config.problem.image_dims = (1, 28, 28)
     config.problem.num_classes = 10
-    config.problem.dataset_location = "/n/home04/nboffi/datasets"
+    config.problem.dataset_location = dataset_location
     config.problem.interp_type = "linear"
     config.problem.base = "gaussian"
     config.problem.gaussian_scale = "adaptive"
