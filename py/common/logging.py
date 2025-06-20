@@ -97,7 +97,7 @@ def make_lowd_plot(
     fontsize = 12.5
 
     ## set up plot array
-    steps = [1, 2, 5, 10, 25]
+    steps = [32, 64, 128]
     titles = ["base and target"] + [rf"${step}$-step" for step in steps]
 
     ## extract target samples
@@ -182,11 +182,7 @@ def make_image_plot(
     fontsize = 12.5
 
     ## set up plot array
-    if cfg.training.train_velocity:
-        steps = [1, 16, 64, 128]
-    else:
-        steps = [1, 2, 4, 8, 16]
-
+    steps = [32, 64, 128]
     titles = [rf"{step}-step" for step in steps]
 
     ## draw multi-step samples from the model
