@@ -59,22 +59,13 @@ def get_config(
     # logging config
     config.logging = ml_collections.ConfigDict()
     config.logging.plot_bs = 25000
-    config.logging.visual_freq = 1000
+    config.logging.visual_freq = 100
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "jax-interpolants-debug"
     config.logging.wandb_name = f"mnist-debug"
     config.logging.wandb_entity = "boffi"
     config.logging.output_folder = output_folder
     config.logging.output_name = config.logging.wandb_name
-
-    # network config
-    config.network = ml_collections.ConfigDict()
-    config.network.network_type = "mlp"
-    config.network.n_hidden = 4
-    config.network.n_neurons = 256
-    config.network.output_dim = 2
-    config.network.act = "gelu"
-    config.network.use_residual = False
 
     # network config
     config.network = ml_collections.ConfigDict()
