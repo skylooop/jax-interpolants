@@ -21,6 +21,7 @@ def get_config(
     config.training = ml_collections.ConfigDict()
     config.training.shuffle = True
     config.training.conditional = False
+    config.training.loss_type = "velocity"
     config.training.class_dropout = 0.0
     config.training.tmin = 0.0
     config.training.tmax = 1.0
