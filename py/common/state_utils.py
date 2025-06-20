@@ -18,7 +18,7 @@ from flax.serialization import from_bytes
 from flax.training import train_state
 from ml_collections import config_dict
 
-from . import flow_map, interpolant, network_utils
+from . import interpolant, network_utils
 
 
 class EMATrainState(train_state.TrainState):
@@ -101,7 +101,7 @@ def setup_training_state(
     cfg: config_dict.ConfigDict,
     ex_input: jnp.ndarray,
     prng_key: jnp.ndarray,
-) -> Tuple[EMATrainState, flow_map.FlowMap, optax.Schedule, jnp.ndarray]:
+) -> Tuple[EMATrainState, nn.Module, optax.Schedule, jnp.ndarray]:
     """Load flax training state."""
 
     # define and initialize the network
