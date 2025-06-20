@@ -85,8 +85,8 @@ def get_config(
         "model_channels": 64,
         "channel_mult": [1, 2, 4],
         "num_blocks": 3,
-        "attn_resolutions": [7],
-        "use_fourier": False,
+        "attn_resolutions": [],
+        "use_fourier": True,
     }
 
     return config
