@@ -16,7 +16,7 @@ from . import state_utils
 from . import dist_utils
 
 
-@functools.partial(jax.jit, static_argnums=(2, 3, 4))
+@functools.partial(jax.jit, static_argnums=(2,))
 def get_loss_fn_args_randomness(
     prng_key: jnp.ndarray,
     cfg: config_dict.ConfigDict,
