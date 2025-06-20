@@ -8,7 +8,9 @@ Basic configuration for the two-dimensional checker example.
 import ml_collections
 
 
-def get_config(slurm_id: int):
+def get_config(
+    slurm_id: int, dataset_location: str, output_folder: str
+) -> ml_collections.ConfigDict:
     # ensure jax.device_count works (weird issue with importlib)
     import jax
 
