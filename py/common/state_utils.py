@@ -89,7 +89,7 @@ def setup_optimizer(cfg: config_dict.ConfigDict):
     tx = optax.masked(
         optax.chain(
             optax.clip_by_global_norm(cfg.optimization.clip),
-            optax.radam(learning_rate=schedule),
+            optax.adam(learning_rate=schedule),
         ),
         mask_fn,
     )
