@@ -83,10 +83,11 @@ def get_config(
     config.network.use_bfloat16 = False
     config.network.unet_kwargs = {
         "model_channels": 64,
-        "channel_mult": [1, 2, 2],
+        "channel_mult": [1, 2, 4],
         "num_blocks": 3,
         "attn_resolutions": [],
         "use_fourier": True,
+        "fourier_bandwidth": 10.0,
     }
 
     return config
