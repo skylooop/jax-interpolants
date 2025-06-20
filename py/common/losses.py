@@ -14,7 +14,6 @@ import jax.numpy as jnp
 from ml_collections import config_dict
 
 from . import interpolant as interpolant
-from . import velocity as velocity
 
 Parameters = Dict[str, Dict]
 
@@ -60,7 +59,7 @@ def loss(
 
 def setup_loss(
     cfg: config_dict.ConfigDict,
-    model: velocity.Velocity,
+    model: nn.Module,
     interp: interpolant.Interpolant,
 ) -> Callable:
     """Setup the loss functions."""
