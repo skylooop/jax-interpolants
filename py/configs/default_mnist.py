@@ -88,12 +88,12 @@ def get_config(
         config.problem.num_classes if config.training.conditional else 0
     )
     config.network.use_cfg = False
-    config.network.logvar_channels = 128
+    config.network.logvar_channels = 64
     config.network.use_bfloat16 = False
     config.network.unet_kwargs = {
-        "model_channels": 128,
+        "model_channels": 64,
         "channel_mult": [1, 2, 2],
-        "num_blocks": 3,
+        "num_blocks": 2,
         "attn_resolutions": [7],
         "use_fourier": False,
     }
