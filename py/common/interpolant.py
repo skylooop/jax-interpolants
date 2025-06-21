@@ -19,7 +19,7 @@ class Interpolant:
     """Basic class for a stochastic interpolant, following the mathematical
     description in https://arxiv.org/abs/2303.08797.
     Assumes that the base distribution is a Gaussian, avoiding the need for
-    the \gamma term.
+    the \\gamma term.
     """
 
     alpha: Callable[[jnp.ndarray | float], jnp.ndarray | float]
