@@ -19,7 +19,6 @@ sys.path.append(py_dir)
 import argparse
 import importlib
 import time
-from typing import Dict, Tuple
 
 import common.datasets as datasets
 import common.dist_utils as dist_utils
@@ -36,7 +35,7 @@ import optax
 from ml_collections import config_dict  # type: ignore
 from tqdm.auto import tqdm as tqdm
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 mpl.rc_file(f"{pathlib.Path(__file__).resolve().parent}/matplotlibrc")
 
 
@@ -102,7 +101,7 @@ def setup_config_dict():
     )
 
 
-def setup_state(cfg: config_dict.ConfigDict, prng_key: jnp.ndarray) -> Tuple[
+def setup_state(cfg: config_dict.ConfigDict, prng_key: jnp.ndarray) -> tuple[
     config_dict.ConfigDict,
     state_utils.StaticArgs,
     state_utils.EMATrainState,

@@ -5,7 +5,7 @@ Nicholas M. Boffi
 Helper routines for neural network definitions.
 """
 
-from typing import Callable, Dict, Tuple
+from collections.abc import Callable
 
 import flax.linen as nn
 import jax
@@ -14,7 +14,7 @@ from ml_collections import config_dict
 
 from . import edm2_net as edm2_net
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 class MLP(nn.Module):
@@ -173,7 +173,7 @@ def setup_network(
 
 def initialize_velocity(
     network_config: config_dict.ConfigDict, ex_input: jnp.ndarray, prng_key: jnp.ndarray
-) -> Tuple[nn.Module, Parameters, jnp.ndarray]:
+) -> tuple[nn.Module, Parameters, jnp.ndarray]:
     # define the network
     net = setup_network(network_config)
 

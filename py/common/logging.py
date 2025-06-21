@@ -5,8 +5,6 @@ Nicholas M. Boffi
 Code for basic wandb visualization and logging.
 """
 
-from typing import Dict, Tuple
-
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -19,7 +17,7 @@ from ml_collections import config_dict
 
 from . import datasets, dist_utils, state_utils, samplers
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 def save_state(
@@ -37,7 +35,7 @@ def save_state(
 
 
 @jax.jit
-def compute_grad_norm(grads: Dict) -> float:
+def compute_grad_norm(grads: dict) -> float:
     """Computes the norm of the gradient."""
     flat_params = ravel_pytree(grads)[0]
     return jnp.linalg.norm(flat_params)
@@ -49,7 +47,7 @@ def log_metrics(
     train_state: state_utils.EMATrainState,
     grads: jnp.ndarray,
     loss_value: float,
-    loss_fn_args: Tuple,
+    loss_fn_args: tuple,
     prng_key: jnp.ndarray,
     step_time: float,
 ) -> jnp.ndarray:
@@ -257,7 +255,7 @@ def make_loss_fn_args_plot(
     cfg: config_dict.ConfigDict,
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
-    loss_fn_args: Tuple,
+    loss_fn_args: tuple,
 ) -> None:
     """Make a plot of the loss function arguments."""
     del train_state

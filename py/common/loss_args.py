@@ -6,7 +6,7 @@ Code for setting up arguments for loss functions.
 """
 
 import functools
-from typing import Callable, Tuple
+from collections.abc import Callable
 
 import jax
 import jax.numpy as jnp
@@ -21,7 +21,7 @@ def get_loss_fn_args_randomness(
     prng_key: jnp.ndarray,
     cfg: config_dict.ConfigDict,
     sample_rho0: Callable,
-) -> Tuple:
+) -> tuple:
     """Draw random values needed for each loss function iteration."""
     # get needed random keys
     (
@@ -91,7 +91,7 @@ def get_loss_fn_args(
     cfg: config_dict.ConfigDict,
     statics: state_utils.StaticArgs,
     prng_key: jnp.ndarray,
-) -> Tuple:
+) -> tuple:
 
     # draw randomness needed for the objective
     (

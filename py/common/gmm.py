@@ -9,7 +9,6 @@ Useful for running synthetic generative modeling experiments.
 import jax
 import jax.numpy as np
 import numpy as onp
-from typing import Tuple
 import functools
 
 
@@ -38,7 +37,7 @@ def sample_gmm(
     return samples
 
 
-def setup_gmm(gmm_type: str, d: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def setup_gmm(gmm_type: str, d: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Set up some basic mixture models."""
 
     if gmm_type == "std_normal_gmm":

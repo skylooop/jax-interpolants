@@ -9,7 +9,7 @@ Supports multi-GPU and multi-host setups using JAX's distributed capabilities.
 import os
 import socket
 import subprocess
-from typing import Any, Tuple
+from typing import Any
 
 import jax.distributed as jd
 import jax.numpy as jnp
@@ -52,12 +52,12 @@ def unreplicate_batch(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
     return x
 
 
-def replicate_loss_fn_args(cfg: config_dict.ConfigDict, loss_fn_args: Tuple) -> Tuple:
+def replicate_loss_fn_args(cfg: config_dict.ConfigDict, loss_fn_args: tuple) -> tuple:
     """Replicate the loss function arguments for data parallelism."""
     return tuple(replicate_batch(cfg, arg) for arg in loss_fn_args)
 
 
-def unreplicate_loss_fn_args(cfg: config_dict.ConfigDict, loss_fn_args: Tuple) -> Tuple:
+def unreplicate_loss_fn_args(cfg: config_dict.ConfigDict, loss_fn_args: tuple) -> tuple:
     """Unreplicate the loss function arguments for data parallelism."""
     return tuple(unreplicate_batch(cfg, arg) for arg in loss_fn_args)
 
