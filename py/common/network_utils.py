@@ -116,7 +116,7 @@ class EDM2Velocity(nn.Module):
         x = x.reshape((1, *x.shape))
 
         # one-hot encode
-        if label != None:
+        if label is not None:
             label = jax.nn.one_hot(label, num_classes=self.one_hot_dim).reshape((1, -1))
 
         return t, x, label
