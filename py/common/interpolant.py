@@ -22,19 +22,23 @@ class Interpolant:
     the \gamma term.
     """
 
-    alpha: Callable[[float], float]
-    beta: Callable[[float], float]
-    alpha_dot: Callable[[float], float]
-    beta_dot: Callable[[float], float]
+    alpha: Callable[[jnp.ndarray | float], jnp.ndarray | float]
+    beta: Callable[[jnp.ndarray | float], jnp.ndarray | float]
+    alpha_dot: Callable[[jnp.ndarray | float], jnp.ndarray | float]
+    beta_dot: Callable[[jnp.ndarray | float], jnp.ndarray | float]
 
-    def calc_It(self, t: float, x0: jnp.ndarray, x1: jnp.ndarray) -> jnp.ndarray:
+    def calc_It(
+        self, t: jnp.ndarray | float, x0: jnp.ndarray, x1: jnp.ndarray
+    ) -> jnp.ndarray:
         return self.alpha(t) * x0 + self.beta(t) * x1
 
-    def calc_It_dot(self, t: float, x0: jnp.ndarray, x1: jnp.ndarray) -> jnp.ndarray:
+    def calc_It_dot(
+        self, t: jnp.ndarray | float, x0: jnp.ndarray, x1: jnp.ndarray
+    ) -> jnp.ndarray:
         return self.alpha_dot(t) * x0 + self.beta_dot(t) * x1
 
     def calc_target(
-        self, t: float, x0: jnp.ndarray, x1: jnp.ndarray, target_type: str
+        self, t: jnp.ndarray | float, x0: jnp.ndarray, x1: jnp.ndarray, target_type: str
     ) -> jnp.ndarray:
         """Compute the target for learning."""
         if target_type == "velocity":

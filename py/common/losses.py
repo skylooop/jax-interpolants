@@ -43,7 +43,7 @@ def loss(
     interp: interpolant.Interpolant,
     model: nn.Module,
     loss_type: str,
-) -> float:
+) -> jnp.ndarray:
     """Loss for learning the drift field b."""
 
     # compute interpolant and the target
@@ -73,7 +73,7 @@ def setup_loss(
         label: jnp.ndarray,
         t: float,
         rng: jnp.ndarray,
-    ) -> float:
+    ) -> jnp.ndarray:
         """Compute the empirical loss."""
         return loss(
             params,

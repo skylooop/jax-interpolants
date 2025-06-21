@@ -46,7 +46,7 @@ def log_metrics(
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
     grads: jnp.ndarray,
-    loss_value: float,
+    loss_value: jnp.ndarray | float,
     loss_fn_args: tuple,
     prng_key: jnp.ndarray,
     step_time: float,
@@ -87,7 +87,7 @@ def make_lowd_plot(
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
     prng_key: jnp.ndarray,
-) -> None:
+) -> jnp.ndarray:
     ## common plot parameters
     plt.close("all")
     sns.set_palette("deep")
@@ -171,7 +171,7 @@ def make_image_plot(
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
     prng_key: jnp.ndarray,
-) -> None:
+) -> jnp.ndarray:
     """Make a plot of the generated images."""
     ## common plot parameters
     plt.close("all")

@@ -43,7 +43,7 @@ def train_loop(
     cfg: config_dict.ConfigDict,
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
-    prng_key: np.ndarray,
+    prng_key: jnp.ndarray,
 ) -> None:
     """Carry out the training loop."""
 

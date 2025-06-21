@@ -20,7 +20,7 @@ def get_loss_fn_args_randomness(
     prng_key: jnp.ndarray,
     cfg: config_dict.ConfigDict,
     sample_rho0: Callable,
-) -> tuple:
+) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray, jnp.ndarray]:
     """Draw random values needed for each loss function iteration."""
     # get needed random keys
     (
@@ -56,7 +56,7 @@ def get_loss_fn_args_randomness(
 
 def get_batch(
     cfg: config_dict.ConfigDict, statics: state_utils.StaticArgs, prng_key: jnp.ndarray
-) -> int:
+) -> tuple[jnp.ndarray, jnp.ndarray | None, jnp.ndarray]:
     """Extract a batch based on the structure expected for image or non-image datasets."""
     is_image_dataset = ("imagenet" in cfg.problem.target) or (
         cfg.problem.target in ["mnist", "cifar10"]

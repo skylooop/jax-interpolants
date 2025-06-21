@@ -64,10 +64,10 @@ class MLPVelocity(nn.Module):
         self,
         t: float,
         x: jnp.ndarray,
-        label: float = None,
+        label: float | None = None,
         train: bool = True,
         calc_weight=False,
-    ) -> jnp.ndarray:
+    ) -> jnp.ndarray | tuple[jnp.ndarray, float]:
         del label
         del train
 
@@ -104,7 +104,12 @@ class EDM2Velocity(nn.Module):
             unet_kwargs=self.config.unet_kwargs,
         )
 
-    def process_inputs(self, t: float, x: jnp.ndarray, label: float = None):
+    def process_inputs(
+        self,
+        t: jnp.ndarray | float,
+        x: jnp.ndarray,
+        label: jnp.ndarray | float | None = None,
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray | None]:
         # add batch dimensions
         t = jnp.asarray(t, dtype=jnp.float32)
         x = x.reshape((1, *x.shape))
@@ -115,16 +120,16 @@ class EDM2Velocity(nn.Module):
 
         return t, x, label
 
-    def calc_weight(self, t: float) -> jnp.ndarray:
+    def calc_weight(self, t: jnp.ndarray | float) -> jnp.ndarray:
         # add batch dimension
         t = jnp.asarray(t, dtype=jnp.float32)
         return self.net.calc_weight(t)
 
     def __call__(
         self,
-        t: float,
+        t: jnp.ndarray | float,
         x: jnp.ndarray,
-        label: float = None,
+        label: jnp.ndarray | float | None = None,
         train: bool = True,
         calc_weight: bool = False,
     ):
