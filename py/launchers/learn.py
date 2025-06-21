@@ -30,9 +30,7 @@ import common.state_utils as state_utils
 import common.updates as updates
 import jax.numpy as jnp
 import matplotlib as mpl
-import numpy as np
-import optax
-from ml_collections import config_dict  # type: ignore
+from ml_collections import config_dict
 from tqdm.auto import tqdm as tqdm
 
 Parameters = dict[str, dict]
