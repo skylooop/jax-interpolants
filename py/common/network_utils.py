@@ -10,6 +10,7 @@ from collections.abc import Callable
 import flax.linen as nn
 import jax
 import jax.numpy as jnp
+from jax.flatten_util import ravel_pytree
 from ml_collections import config_dict
 
 from . import edm2_net as edm2_net
@@ -195,7 +196,7 @@ def initialize_velocity(
     )
     prng_key = jax.random.split(prng_key)[0]
 
-    print(f"Number of parameters: {jax.flatten_util.ravel_pytree(params)[0].size}")
+    print(f"Number of parameters: {ravel_pytree(params)[0].size}")
 
     if network_config.network_type == "edm2":
         params = edm2_net.project_to_sphere(params)
