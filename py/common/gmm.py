@@ -6,10 +6,11 @@ Simple class for a Gaussian mixture model.
 Useful for running synthetic generative modeling experiments.
 """
 
+import functools
+
 import jax
 import jax.numpy as np
 import numpy as onp
-import functools
 
 
 @functools.partial(jax.jit, static_argnums=0)

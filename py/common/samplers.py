@@ -11,7 +11,6 @@ from collections.abc import Callable
 import jax
 import jax.numpy as jnp
 
-
 Parameters = dict[str, dict]
 
 

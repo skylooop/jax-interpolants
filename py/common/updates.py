@@ -12,7 +12,7 @@ import jax
 import ml_collections.config_dict as config_dict
 from jax import value_and_grad
 
-from . import state_utils, edm2_net
+from . import edm2_net, state_utils
 
 Parameters = dict[str, dict]
 

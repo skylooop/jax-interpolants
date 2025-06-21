@@ -5,9 +5,9 @@ Nicholas M. Boffi
 Utilities for storing training state.
 """
 
+from collections.abc import Callable
 from copy import deepcopy
 from typing import Any, NamedTuple
-from collections.abc import Callable
 
 import flax.linen as nn
 import jax

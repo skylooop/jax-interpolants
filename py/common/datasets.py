@@ -8,11 +8,10 @@ Code for initializing common datasets.
 import functools
 from collections.abc import Callable
 
-import tensorflow as tf
-
 import jax
 import jax.numpy as jnp
 import numpy as np
+import tensorflow as tf
 import tensorflow_datasets as tfds
 from ml_collections import config_dict
 

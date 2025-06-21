@@ -15,7 +15,7 @@ from jax.flatten_util import ravel_pytree
 from matplotlib import pyplot as plt
 from ml_collections import config_dict
 
-from . import datasets, dist_utils, state_utils, samplers
+from . import datasets, dist_utils, samplers, state_utils
 
 Parameters = dict[str, dict]
 

@@ -12,8 +12,7 @@ import jax
 import jax.numpy as jnp
 from ml_collections import config_dict
 
-from . import state_utils
-from . import dist_utils
+from . import dist_utils, state_utils
 
 
 @functools.partial(jax.jit, static_argnums=(1, 2))
