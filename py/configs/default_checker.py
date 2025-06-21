@@ -37,7 +37,7 @@ def get_config(
     config.problem.image_dims = None
     config.problem.num_classes = None
     config.problem.target = "checker"
-    config.problem.dataset_location = None
+    config.problem.dataset_location = dataset_location
     config.problem.interp_type = "linear"
     config.problem.base = "gaussian"
     config.problem.gaussian_scale = "adaptive"
