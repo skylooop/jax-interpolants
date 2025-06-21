@@ -60,10 +60,10 @@ def log_metrics(
 
     wandb.log(
         {
-            f"loss": loss_value,
-            f"grad": compute_grad_norm(grads),
-            f"learning_rate": learning_rate,
-            f"step_time": step_time,
+            "loss": loss_value,
+            "grad": compute_grad_norm(grads),
+            "learning_rate": learning_rate,
+            "step_time": step_time,
         }
     )
 

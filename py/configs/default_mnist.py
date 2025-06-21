@@ -62,7 +62,7 @@ def get_config(
     config.logging.visual_freq = 100
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "jax-interpolants-debug"
-    config.logging.wandb_name = f"mnist-debug"
+    config.logging.wandb_name = "mnist-debug"
     config.logging.wandb_entity = "boffi"
     config.logging.output_folder = output_folder
     config.logging.output_name = config.logging.wandb_name
