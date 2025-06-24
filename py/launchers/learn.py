@@ -88,6 +88,7 @@ def parse_command_line_arguments():
     parser.add_argument("--slurm_id", type=int)
     parser.add_argument("--dataset_location", type=str)
     parser.add_argument("--output_folder", type=str)
+    parser.add_argument("--wandb_entity", type=str)
     return parser.parse_args()
 
 
@@ -95,7 +96,10 @@ def setup_config_dict():
     args = parse_command_line_arguments()
     cfg_module = importlib.import_module(args.cfg_path)
     return cfg_module.get_config(
-        args.slurm_id, args.dataset_location, args.output_folder
+        args.slurm_id,
+        args.dataset_location,
+        args.output_folder,
+        args.wandb_entity,
     )
 
 
