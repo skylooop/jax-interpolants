@@ -96,7 +96,7 @@ def setup_interpolant(cfg: config_dict.ConfigDict) -> Interpolant:
             alpha_dot=lambda t: -0.5 * jnp.pi * jnp.sin(jnp.pi * t / 2),
             beta_dot=lambda t: 0.5 * jnp.pi * jnp.cos(jnp.pi * t / 2),
         )
-    elif cfg.problem.interpolant_type == "vp_diffusion":
+    elif cfg.problem.interp_type == "vp_diffusion":
         return Interpolant(
             alpha=lambda t: jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
             beta=lambda t: jnp.exp(t - cfg.problem.tmax),
@@ -104,24 +104,21 @@ def setup_interpolant(cfg: config_dict.ConfigDict) -> Interpolant:
             / jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
             beta_dot=lambda t: jnp.exp(t - cfg.problem.tmax),
         )
-
-    elif cfg.problem.interpolant_type == "vp_diffusion_logscale":
+    elif cfg.problem.interp_type == "vp_diffusion_logscale":
         return Interpolant(
             alpha=lambda t: jnp.sqrt(1 - t**2),
             beta=lambda t: t,
             alpha_dot=lambda t: -t / jnp.sqrt(1 - t**2),
             beta_dot=lambda t: 1,
         )
-
-    elif cfg.problem.interpolant_type == "ve_diffusion":
+    elif cfg.problem.interp_type == "ve_diffusion":
         return Interpolant(
             alpha=lambda t: cfg.problem.tf - t,
             beta=lambda t: 1,
             alpha_dot=lambda t: -1,
             beta_dot=lambda t: 0,
         )
-
     else:
-        raise ValueError(f"Interpolant type {cfg.interpolant_type} not recognized.")
+        raise ValueError(f"Interpolant type {cfg.interp_type} not recognized.")
 
     return interp
