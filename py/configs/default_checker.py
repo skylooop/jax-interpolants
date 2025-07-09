@@ -9,7 +9,7 @@ import ml_collections
 
 
 def get_config(
-    slurm_id: int, dataset_location: str, output_folder: str
+    slurm_id: int, dataset_location: str, output_folder: str, wandb_entity: str
 ) -> ml_collections.ConfigDict:
     # ensure jax.device_count works (weird issue with importlib)
     import jax
@@ -37,7 +37,7 @@ def get_config(
     config.problem.image_dims = None
     config.problem.num_classes = None
     config.problem.target = "checker"
-    config.problem.dataset_location = None
+    config.problem.dataset_location = dataset_location
     config.problem.interp_type = "linear"
     config.problem.base = "gaussian"
     config.problem.gaussian_scale = "adaptive"
@@ -60,8 +60,8 @@ def get_config(
     config.logging.visual_freq = 5000
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "jax-interpolants-debug"
-    config.logging.wandb_name = f"checker-debug"
-    config.logging.wandb_entity = "boffi"
+    config.logging.wandb_name = "checker-debug"
+    config.logging.wandb_entity = wandb_entity
     config.logging.output_folder = output_folder
     config.logging.output_name = config.logging.wandb_name
 

@@ -6,22 +6,22 @@ Simple class for a Gaussian mixture model.
 Useful for running synthetic generative modeling experiments.
 """
 
-import jax
-import jax.numpy as np
-import numpy as onp
-from typing import Tuple
 import functools
+
+import jax
+import jax.numpy as jnp
+import numpy as np
 
 
 @functools.partial(jax.jit, static_argnums=0)
 def sample_gmm(
     num_samples: int,
-    keys: np.ndarray,
+    keys: jnp.ndarray,
     *,
-    weights: np.ndarray,  # [num_components]
-    means: np.ndarray,  # [num_components, d]
-    covariances: np.ndarray,  # [num_components, d, d]
-) -> np.ndarray:
+    weights: jnp.ndarray,  # [num_components]
+    means: jnp.ndarray,  # [num_components, d]
+    covariances: jnp.ndarray,  # [num_components, d, d]
+) -> jnp.ndarray:
     """Sample from a Gaussian mixture model."""
 
     num_components = weights.size
@@ -38,76 +38,76 @@ def sample_gmm(
     return samples
 
 
-def setup_gmm(gmm_type: str, d: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def setup_gmm(gmm_type: str, d: int) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
     """Set up some basic mixture models."""
 
     if gmm_type == "std_normal_gmm":
-        weights = np.array([1.0])
-        means = np.zeros((1, d))
-        covariances = np.zeros((1, d, d))
-        covariances[0] = np.eye(d)
-        covariances = np.array(covariances)
+        weights = jnp.array([1.0])
+        means = jnp.zeros((1, d))
+        covariances = jnp.zeros((1, d, d))
+        covariances[0] = jnp.eye(d)
+        covariances = jnp.array(covariances)
 
     elif gmm_type == "basic_gmm":
-        weights = np.ones(1)
-        means = np.ones((4, d))
-        covariances = onp.zeros((1, d, d))
-        covariances[0] = onp.eye(d)
-        covariances = np.array(covariances)
+        weights = jnp.ones(1)
+        means = jnp.ones((4, d))
+        covariances = np.zeros((1, d, d))
+        covariances[0] = np.eye(d)
+        covariances = jnp.array(covariances)
 
     elif gmm_type == "flower_gmm":
         assert d == 2, "Flower GMM only works in 2D."
         num_components = 8
-        weights = np.ones(num_components) / num_components
-        means = onp.zeros((num_components, d))
-        covariances = onp.zeros((num_components, d, d))
+        weights = jnp.ones(num_components) / num_components
+        means = np.zeros((num_components, d))
+        covariances = np.zeros((num_components, d, d))
         for kk in range(num_components):
-            means[kk] = np.array(
+            means[kk] = jnp.array(
                 [
-                    5 * np.cos(2 * np.pi * kk / num_components),
-                    5 * np.sin(2 * np.pi * kk / num_components),
+                    5 * jnp.cos(2 * jnp.pi * kk / num_components),
+                    5 * jnp.sin(2 * jnp.pi * kk / num_components),
                 ]
             )
-            covariances[kk] = 0.5 * onp.eye(d)
+            covariances[kk] = 0.5 * np.eye(d)
 
-        means = np.array(means)
-        covariances = np.array(covariances)
+        means = jnp.array(means)
+        covariances = jnp.array(covariances)
 
     elif gmm_type == "square_gmm":
         assert d == 2, "Square GMM only works in 2D."
         num_components = 4
-        weights = np.ones(num_components) / num_components
-        means = onp.zeros((num_components, d))
-        covariances = onp.zeros((num_components, d, d))
+        weights = jnp.ones(num_components) / num_components
+        means = np.zeros((num_components, d))
+        covariances = np.zeros((num_components, d, d))
         for kk in range(num_components):
-            means[kk] = np.array(
+            means[kk] = jnp.array(
                 [
-                    5 * np.cos(2 * np.pi * kk / num_components),
-                    5 * np.sin(2 * np.pi * kk / num_components),
+                    5 * jnp.cos(2 * jnp.pi * kk / num_components),
+                    5 * jnp.sin(2 * jnp.pi * kk / num_components),
                 ]
             )
-            covariances[kk] = 0.5 * onp.eye(d)
+            covariances[kk] = 0.5 * np.eye(d)
 
-        means = np.array(means)
-        covariances = np.array(covariances)
+        means = jnp.array(means)
+        covariances = jnp.array(covariances)
 
     elif gmm_type == "line_gmm":
         assert d == 2, "Line GMM only works in 2D."
         num_components = 2
-        weights = np.ones(num_components) / num_components
-        means = onp.zeros((num_components, d))
-        covariances = onp.zeros((num_components, d, d))
+        weights = jnp.ones(num_components) / num_components
+        means = np.zeros((num_components, d))
+        covariances = np.zeros((num_components, d, d))
         for kk in range(num_components):
-            means[kk] = np.array(
+            means[kk] = jnp.array(
                 [
-                    5 * np.cos(2 * np.pi * kk / num_components),
-                    5 * np.sin(2 * np.pi * kk / num_components),
+                    5 * jnp.cos(2 * jnp.pi * kk / num_components),
+                    5 * jnp.sin(2 * jnp.pi * kk / num_components),
                 ]
             )
-            covariances[kk] = 0.5 * onp.eye(d)
+            covariances[kk] = 0.5 * np.eye(d)
 
-        means = np.array(means)
-        covariances = np.array(covariances)
+        means = jnp.array(means)
+        covariances = jnp.array(covariances)
 
     else:
         raise ValueError(f"Invalid GMM type: {gmm_type}")

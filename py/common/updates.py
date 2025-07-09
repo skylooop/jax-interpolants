@@ -6,15 +6,15 @@ Update functions for learning.
 """
 
 import functools
-from typing import Callable, Dict, Tuple
+from collections.abc import Callable
 
 import jax
 import ml_collections.config_dict as config_dict
 from jax import value_and_grad
 
-from . import state_utils, edm2_net
+from . import edm2_net, state_utils
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 def setup_train_step(cfg: config_dict.ConfigDict) -> Callable:
@@ -35,7 +35,7 @@ def setup_train_step(cfg: config_dict.ConfigDict) -> Callable:
         state: state_utils.EMATrainState,
         loss_func: Callable[[Parameters], float],
         loss_func_args=tuple(),
-    ) -> Tuple[state_utils.EMATrainState, float, Parameters]:
+    ) -> tuple[state_utils.EMATrainState, float, Parameters]:
         """Single training step for the neural network.
 
         Args:

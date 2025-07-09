@@ -6,7 +6,7 @@ Loss functions for learning.
 """
 
 import functools
-from typing import Callable, Dict
+from collections.abc import Callable
 
 import flax.linen as nn
 import jax
@@ -15,7 +15,7 @@ from ml_collections import config_dict
 
 from . import interpolant as interpolant
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 def mean_reduce(func):
@@ -43,7 +43,7 @@ def loss(
     interp: interpolant.Interpolant,
     model: nn.Module,
     loss_type: str,
-) -> float:
+) -> jnp.ndarray:
     """Loss for learning the drift field b."""
 
     # compute interpolant and the target
@@ -73,7 +73,7 @@ def setup_loss(
         label: jnp.ndarray,
         t: float,
         rng: jnp.ndarray,
-    ) -> float:
+    ) -> jnp.ndarray:
         """Compute the empirical loss."""
         return loss(
             params,

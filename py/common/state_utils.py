@@ -5,8 +5,9 @@ Nicholas M. Boffi
 Utilities for storing training state.
 """
 
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable, Dict, NamedTuple, Tuple
+from typing import Any, NamedTuple
 
 import flax.linen as nn
 import jax
@@ -24,7 +25,7 @@ from . import interpolant, network_utils
 class EMATrainState(train_state.TrainState):
     """Train state including EMA parameters."""
 
-    ema_params: Dict[float, Any] = struct.field(default_factory=dict)
+    ema_params: dict[float, Any] = struct.field(default_factory=dict)
 
 
 class StaticArgs(NamedTuple):
@@ -101,7 +102,7 @@ def setup_training_state(
     cfg: config_dict.ConfigDict,
     ex_input: jnp.ndarray,
     prng_key: jnp.ndarray,
-) -> Tuple[EMATrainState, nn.Module, optax.Schedule, jnp.ndarray]:
+) -> tuple[EMATrainState, nn.Module, optax.Schedule, jnp.ndarray]:
     """Load flax training state."""
 
     # define and initialize the network

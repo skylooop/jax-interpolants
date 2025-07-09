@@ -6,13 +6,12 @@ Code for initializing common datasets.
 """
 
 import functools
-from typing import Callable, Dict
-
-import tensorflow as tf
+from collections.abc import Callable
 
 import jax
 import jax.numpy as jnp
 import numpy as np
+import tensorflow as tf
 import tensorflow_datasets as tfds
 from ml_collections import config_dict
 
@@ -31,7 +30,7 @@ def normalize_image_tf(image: tf.Tensor):
     return (2 * (image / 255)) - 1
 
 
-def preprocess_image(cfg, x: Dict) -> Dict:
+def preprocess_image(cfg, x: dict) -> dict:
     """Preprocess the image for TensorFlow datasets."""
     image = x["image"]
     label = x["label"]

@@ -6,17 +6,16 @@ Basic routines for sampling from a flow model.
 """
 
 import functools
-from typing import Callable, Dict
+from collections.abc import Callable
 
 import jax
 import jax.numpy as jnp
 
-
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 def sample_euler(
-    apply_velocity: Callable, variables: Dict, x0: jnp.ndarray, N: int, label: int
+    apply_velocity: Callable, variables: dict, x0: jnp.ndarray, N: int, label: int
 ) -> jnp.ndarray:
     """Euler integration."""
     ts = jnp.linspace(0.0, 1.0, N + 1)
@@ -36,7 +35,7 @@ def sample_euler(
 
 def sample(
     apply_velocity: Callable,
-    variables: Dict,
+    variables: dict,
     x0: jnp.ndarray,
     N: int,
     label: int,
@@ -65,7 +64,7 @@ def sample(
 @functools.partial(jax.jit, static_argnums=(0, 3))
 @functools.partial(jax.vmap, in_axes=(None, None, 0, None, 0))
 def batch_sample(
-    apply_velocity, variables: Dict, x0s: jnp.ndarray, N: int, label: int
+    apply_velocity, variables: dict, x0s: jnp.ndarray, N: int, label: int
 ) -> jnp.ndarray:
     """Batch unconditional sampling."""
     return sample(apply_velocity, variables, x0s, N, label)

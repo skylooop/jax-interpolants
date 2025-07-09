@@ -19,7 +19,6 @@ sys.path.append(py_dir)
 import argparse
 import importlib
 import time
-from typing import Dict, Tuple
 
 import common.datasets as datasets
 import common.dist_utils as dist_utils
@@ -31,12 +30,10 @@ import common.state_utils as state_utils
 import common.updates as updates
 import jax.numpy as jnp
 import matplotlib as mpl
-import numpy as np
-import optax
-from ml_collections import config_dict  # type: ignore
+from ml_collections import config_dict
 from tqdm.auto import tqdm as tqdm
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 mpl.rc_file(f"{pathlib.Path(__file__).resolve().parent}/matplotlibrc")
 
 
@@ -44,7 +41,7 @@ def train_loop(
     cfg: config_dict.ConfigDict,
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
-    prng_key: np.ndarray,
+    prng_key: jnp.ndarray,
 ) -> None:
     """Carry out the training loop."""
 
@@ -91,6 +88,7 @@ def parse_command_line_arguments():
     parser.add_argument("--slurm_id", type=int)
     parser.add_argument("--dataset_location", type=str)
     parser.add_argument("--output_folder", type=str)
+    parser.add_argument("--wandb_entity", type=str)
     return parser.parse_args()
 
 
@@ -98,11 +96,14 @@ def setup_config_dict():
     args = parse_command_line_arguments()
     cfg_module = importlib.import_module(args.cfg_path)
     return cfg_module.get_config(
-        args.slurm_id, args.dataset_location, args.output_folder
+        args.slurm_id,
+        args.dataset_location,
+        args.output_folder,
+        args.wandb_entity,
     )
 
 
-def setup_state(cfg: config_dict.ConfigDict, prng_key: jnp.ndarray) -> Tuple[
+def setup_state(cfg: config_dict.ConfigDict, prng_key: jnp.ndarray) -> tuple[
     config_dict.ConfigDict,
     state_utils.StaticArgs,
     state_utils.EMATrainState,

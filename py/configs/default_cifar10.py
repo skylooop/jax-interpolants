@@ -11,7 +11,7 @@ train_velocity = [False, False]
 
 
 def get_config(
-    slurm_id: int, dataset_location: str, output_folder: str
+    slurm_id: int, dataset_location: str, output_folder: str, wandb_entity: str
 ) -> ml_collections.ConfigDict:
     # ensure jax.device_count works (weird issue with importlib)
     import jax
@@ -78,7 +78,7 @@ def get_config(
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "fmm2"
     config.logging.wandb_name = f"cifar10_tacc_load_sweep_no_ema_5_12_25_{slurm_id}"
-    config.logging.wandb_entity = "boffi"
+    config.logging.wandb_entity = wandb_entity
     config.logging.output_folder = output_folder
     config.logging.output_name = config.logging.wandb_name
 

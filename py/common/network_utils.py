@@ -5,16 +5,17 @@ Nicholas M. Boffi
 Helper routines for neural network definitions.
 """
 
-from typing import Callable, Dict, Tuple
+from collections.abc import Callable
 
 import flax.linen as nn
 import jax
 import jax.numpy as jnp
+from jax.flatten_util import ravel_pytree
 from ml_collections import config_dict
 
 from . import edm2_net as edm2_net
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 class MLP(nn.Module):
@@ -64,10 +65,10 @@ class MLPVelocity(nn.Module):
         self,
         t: float,
         x: jnp.ndarray,
-        label: float = None,
+        label: float | None = None,
         train: bool = True,
         calc_weight=False,
-    ) -> jnp.ndarray:
+    ) -> jnp.ndarray | tuple[jnp.ndarray, float]:
         del label
         del train
 
@@ -104,27 +105,32 @@ class EDM2Velocity(nn.Module):
             unet_kwargs=self.config.unet_kwargs,
         )
 
-    def process_inputs(self, t: float, x: jnp.ndarray, label: float = None):
+    def process_inputs(
+        self,
+        t: jnp.ndarray | float,
+        x: jnp.ndarray,
+        label: jnp.ndarray | float | None = None,
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray | None]:
         # add batch dimensions
         t = jnp.asarray(t, dtype=jnp.float32)
         x = x.reshape((1, *x.shape))
 
         # one-hot encode
-        if label != None:
+        if label is not None:
             label = jax.nn.one_hot(label, num_classes=self.one_hot_dim).reshape((1, -1))
 
         return t, x, label
 
-    def calc_weight(self, t: float) -> jnp.ndarray:
+    def calc_weight(self, t: jnp.ndarray | float) -> jnp.ndarray:
         # add batch dimension
         t = jnp.asarray(t, dtype=jnp.float32)
         return self.net.calc_weight(t)
 
     def __call__(
         self,
-        t: float,
+        t: jnp.ndarray | float,
         x: jnp.ndarray,
-        label: float = None,
+        label: jnp.ndarray | float | None = None,
         train: bool = True,
         calc_weight: bool = False,
     ):
@@ -173,7 +179,7 @@ def setup_network(
 
 def initialize_velocity(
     network_config: config_dict.ConfigDict, ex_input: jnp.ndarray, prng_key: jnp.ndarray
-) -> Tuple[nn.Module, Parameters, jnp.ndarray]:
+) -> tuple[nn.Module, Parameters, jnp.ndarray]:
     # define the network
     net = setup_network(network_config)
 
@@ -190,7 +196,7 @@ def initialize_velocity(
     )
     prng_key = jax.random.split(prng_key)[0]
 
-    print(f"Number of parameters: {jax.flatten_util.ravel_pytree(params)[0].size}")
+    print(f"Number of parameters: {ravel_pytree(params)[0].size}")
 
     if network_config.network_type == "edm2":
         params = edm2_net.project_to_sphere(params)

@@ -7,7 +7,7 @@ Standardized stochastic interpolant implementation.
 
 import dataclasses
 import functools
-from typing import Callable
+from collections.abc import Callable
 
 import jax
 import jax.numpy as jnp
@@ -19,22 +19,26 @@ class Interpolant:
     """Basic class for a stochastic interpolant, following the mathematical
     description in https://arxiv.org/abs/2303.08797.
     Assumes that the base distribution is a Gaussian, avoiding the need for
-    the \gamma term.
+    the \\gamma term.
     """
 
-    alpha: Callable[[float], float]
-    beta: Callable[[float], float]
-    alpha_dot: Callable[[float], float]
-    beta_dot: Callable[[float], float]
+    alpha: Callable[[jnp.ndarray | float], jnp.ndarray | float]
+    beta: Callable[[jnp.ndarray | float], jnp.ndarray | float]
+    alpha_dot: Callable[[jnp.ndarray | float], jnp.ndarray | float]
+    beta_dot: Callable[[jnp.ndarray | float], jnp.ndarray | float]
 
-    def calc_It(self, t: float, x0: jnp.ndarray, x1: jnp.ndarray) -> jnp.ndarray:
+    def calc_It(
+        self, t: jnp.ndarray | float, x0: jnp.ndarray, x1: jnp.ndarray
+    ) -> jnp.ndarray:
         return self.alpha(t) * x0 + self.beta(t) * x1
 
-    def calc_It_dot(self, t: float, x0: jnp.ndarray, x1: jnp.ndarray) -> jnp.ndarray:
+    def calc_It_dot(
+        self, t: jnp.ndarray | float, x0: jnp.ndarray, x1: jnp.ndarray
+    ) -> jnp.ndarray:
         return self.alpha_dot(t) * x0 + self.beta_dot(t) * x1
 
     def calc_target(
-        self, t: float, x0: jnp.ndarray, x1: jnp.ndarray, target_type: str
+        self, t: jnp.ndarray | float, x0: jnp.ndarray, x1: jnp.ndarray, target_type: str
     ) -> jnp.ndarray:
         """Compute the target for learning."""
         if target_type == "velocity":
@@ -92,7 +96,7 @@ def setup_interpolant(cfg: config_dict.ConfigDict) -> Interpolant:
             alpha_dot=lambda t: -0.5 * jnp.pi * jnp.sin(jnp.pi * t / 2),
             beta_dot=lambda t: 0.5 * jnp.pi * jnp.cos(jnp.pi * t / 2),
         )
-    elif cfg.problem.interpolant_type == "vp_diffusion":
+    elif cfg.problem.interp_type == "vp_diffusion":
         return Interpolant(
             alpha=lambda t: jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
             beta=lambda t: jnp.exp(t - cfg.problem.tmax),
@@ -100,24 +104,21 @@ def setup_interpolant(cfg: config_dict.ConfigDict) -> Interpolant:
             / jnp.sqrt(1 - jnp.exp(2 * (t - cfg.problem.tmax))),
             beta_dot=lambda t: jnp.exp(t - cfg.problem.tmax),
         )
-
-    elif cfg.problem.interpolant_type == "vp_diffusion_logscale":
+    elif cfg.problem.interp_type == "vp_diffusion_logscale":
         return Interpolant(
             alpha=lambda t: jnp.sqrt(1 - t**2),
             beta=lambda t: t,
             alpha_dot=lambda t: -t / jnp.sqrt(1 - t**2),
             beta_dot=lambda t: 1,
         )
-
-    elif cfg.problem.interpolant_type == "ve_diffusion":
+    elif cfg.problem.interp_type == "ve_diffusion":
         return Interpolant(
             alpha=lambda t: cfg.problem.tf - t,
             beta=lambda t: 1,
             alpha_dot=lambda t: -1,
             beta_dot=lambda t: 0,
         )
-
     else:
-        raise ValueError(f"Interpolant type {cfg.interpolant_type} not recognized.")
+        raise ValueError(f"Interpolant type {cfg.interp_type} not recognized.")
 
     return interp

@@ -5,8 +5,6 @@ Nicholas M. Boffi
 Code for basic wandb visualization and logging.
 """
 
-from typing import Dict, Tuple
-
 import jax
 import jax.numpy as jnp
 import numpy as np
@@ -17,9 +15,9 @@ from jax.flatten_util import ravel_pytree
 from matplotlib import pyplot as plt
 from ml_collections import config_dict
 
-from . import datasets, dist_utils, state_utils, samplers
+from . import datasets, dist_utils, samplers, state_utils
 
-Parameters = Dict[str, Dict]
+Parameters = dict[str, dict]
 
 
 def save_state(
@@ -37,7 +35,7 @@ def save_state(
 
 
 @jax.jit
-def compute_grad_norm(grads: Dict) -> float:
+def compute_grad_norm(grads: dict) -> float:
     """Computes the norm of the gradient."""
     flat_params = ravel_pytree(grads)[0]
     return jnp.linalg.norm(flat_params)
@@ -48,8 +46,8 @@ def log_metrics(
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
     grads: jnp.ndarray,
-    loss_value: float,
-    loss_fn_args: Tuple,
+    loss_value: jnp.ndarray | float,
+    loss_fn_args: tuple,
     prng_key: jnp.ndarray,
     step_time: float,
 ) -> jnp.ndarray:
@@ -62,10 +60,10 @@ def log_metrics(
 
     wandb.log(
         {
-            f"loss": loss_value,
-            f"grad": compute_grad_norm(grads),
-            f"learning_rate": learning_rate,
-            f"step_time": step_time,
+            "loss": loss_value,
+            "grad": compute_grad_norm(grads),
+            "learning_rate": learning_rate,
+            "step_time": step_time,
         }
     )
 
@@ -89,7 +87,7 @@ def make_lowd_plot(
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
     prng_key: jnp.ndarray,
-) -> None:
+) -> jnp.ndarray:
     ## common plot parameters
     plt.close("all")
     sns.set_palette("deep")
@@ -173,7 +171,7 @@ def make_image_plot(
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
     prng_key: jnp.ndarray,
-) -> None:
+) -> jnp.ndarray:
     """Make a plot of the generated images."""
     ## common plot parameters
     plt.close("all")
@@ -257,7 +255,7 @@ def make_loss_fn_args_plot(
     cfg: config_dict.ConfigDict,
     statics: state_utils.StaticArgs,
     train_state: state_utils.EMATrainState,
-    loss_fn_args: Tuple,
+    loss_fn_args: tuple,
 ) -> None:
     """Make a plot of the loss function arguments."""
     del train_state

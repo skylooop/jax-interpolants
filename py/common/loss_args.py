@@ -6,14 +6,13 @@ Code for setting up arguments for loss functions.
 """
 
 import functools
-from typing import Callable, Tuple
+from collections.abc import Callable
 
 import jax
 import jax.numpy as jnp
 from ml_collections import config_dict
 
-from . import state_utils
-from . import dist_utils
+from . import dist_utils, state_utils
 
 
 @functools.partial(jax.jit, static_argnums=(1, 2))
@@ -21,7 +20,7 @@ def get_loss_fn_args_randomness(
     prng_key: jnp.ndarray,
     cfg: config_dict.ConfigDict,
     sample_rho0: Callable,
-) -> Tuple:
+) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray, jnp.ndarray]:
     """Draw random values needed for each loss function iteration."""
     # get needed random keys
     (
@@ -57,7 +56,7 @@ def get_loss_fn_args_randomness(
 
 def get_batch(
     cfg: config_dict.ConfigDict, statics: state_utils.StaticArgs, prng_key: jnp.ndarray
-) -> int:
+) -> tuple[jnp.ndarray, jnp.ndarray | None, jnp.ndarray]:
     """Extract a batch based on the structure expected for image or non-image datasets."""
     is_image_dataset = ("imagenet" in cfg.problem.target) or (
         cfg.problem.target in ["mnist", "cifar10"]
@@ -91,7 +90,7 @@ def get_loss_fn_args(
     cfg: config_dict.ConfigDict,
     statics: state_utils.StaticArgs,
     prng_key: jnp.ndarray,
-) -> Tuple:
+) -> tuple:
 
     # draw randomness needed for the objective
     (

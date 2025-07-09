@@ -9,7 +9,7 @@ import ml_collections
 
 
 def get_config(
-    slurm_id: int, dataset_location: str, output_folder: str
+    slurm_id: int, dataset_location: str, output_folder: str, wandb_entity: str
 ) -> ml_collections.ConfigDict:
     # ensure jax.device_count works (weird issue with importlib)
     import jax
@@ -62,8 +62,8 @@ def get_config(
     config.logging.visual_freq = 100
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "jax-interpolants-debug"
-    config.logging.wandb_name = f"mnist-debug"
-    config.logging.wandb_entity = "boffi"
+    config.logging.wandb_name = "mnist-debug"
+    config.logging.wandb_entity = wandb_entity
     config.logging.output_folder = output_folder
     config.logging.output_name = config.logging.wandb_name
 
