@@ -1,13 +1,11 @@
 """
 Nicholas M. Boffi
-4/16/25
+6/19/25
+
+Basic configuration for CIFAR-10.
 """
 
 import ml_collections
-
-loss_types = ["lsd", "csd"]
-pfmm_types = [None, None]
-train_velocity = [False, False]
 
 
 def get_config(
@@ -16,6 +14,8 @@ def get_config(
     # ensure jax.device_count works (weird issue with importlib)
     import jax
 
+    del slurm_id
+
     # setup overall config
     config = ml_collections.ConfigDict()
 
@@ -23,32 +23,22 @@ def get_config(
     config.training = ml_collections.ConfigDict()
     config.training.shuffle = True
     config.training.conditional = False
+    config.training.loss_type = "velocity"
     config.training.class_dropout = 0.0
-    config.training.stopgrad_type = "lmd"
-    config.training.pfmm_type = pfmm_types[slurm_id]
-    config.training.loss_type = loss_types[slurm_id]
-    config.training.use_ema_teacher = False
-    config.training.hmax = 0.0
-    config.training.interp_anneal = 0
-    config.training.anneal_steps = 10_000
     config.training.tmin = 0.0
     config.training.tmax = 1.0
     config.training.seed = 42
-    config.training.train_velocity = False
-    config.training.rescale_lsd = False
-    config.training.calc_both_diagonals = False
     config.training.ema_facs = [0.999, 0.9999]
     config.training.ndevices = jax.device_count()
-    config.training.local_ndevices = jax.local_device_count()
     config.training.n_nodes = jax.process_count()
 
     # problem config
     config.problem = ml_collections.ConfigDict()
     config.problem.n = 60000
-    config.problem.image_dims = (3, 32, 32)
     config.problem.d = 3072
-    config.problem.num_classes = 10
     config.problem.target = "cifar10"
+    config.problem.image_dims = (3, 32, 32)
+    config.problem.num_classes = 10
     config.problem.dataset_location = dataset_location
     config.problem.interp_type = "linear"
     config.problem.base = "gaussian"
@@ -57,12 +47,7 @@ def get_config(
     # optimization config
     config.optimization = ml_collections.ConfigDict()
     config.optimization.bs = 128
-    config.optimization.global_bs = (
-        config.optimization.bs
-        * config.training.n_nodes
-        * config.training.local_ndevices
-    )
-    config.optimization.learning_rate = 5e-3
+    config.optimization.learning_rate = 1e-3
     config.optimization.clip = 10.0
     config.optimization.total_samples = 200_000_000
     config.optimization.total_steps = int(
@@ -76,8 +61,8 @@ def get_config(
     config.logging.plot_bs = 5
     config.logging.visual_freq = 2500
     config.logging.save_freq = config.optimization.total_steps // 50
-    config.logging.wandb_project = "fmm2"
-    config.logging.wandb_name = f"cifar10_tacc_load_sweep_no_ema_5_12_25_{slurm_id}"
+    config.logging.wandb_project = "jax-interpolants-debug"
+    config.logging.wandb_name = f"cifar10-debug"
     config.logging.wandb_entity = wandb_entity
     config.logging.output_folder = output_folder
     config.logging.output_name = config.logging.wandb_name
@@ -85,12 +70,8 @@ def get_config(
     # network config
     config.network = ml_collections.ConfigDict()
     config.network.network_type = "edm2"
-    config.network.load_path = (
-        "/scratch/10684/nmboffi/models/cifar10_tacc_sweep_5_5_25_20.pkl"
-    )
-    config.network.load_from_nvidia = False
-    config.network.load_from_velocity = True
-    config.network.load_ema_fac = 0.9999
+    config.network.load_path = ""
+    config.network.reset_optimizer = False
     config.network.img_resolution = config.problem.image_dims[1]
     config.network.img_channels = config.problem.image_dims[0]
     config.network.input_dims = config.problem.image_dims
@@ -98,8 +79,6 @@ def get_config(
         config.problem.num_classes if config.training.conditional else 0
     )
     config.network.use_cfg = False
-    config.network.is_velocity = config.training.train_velocity
-    config.network.reset_optimizer = False
     config.network.logvar_channels = 128
     config.network.use_bfloat16 = False
     config.network.unet_kwargs = {
