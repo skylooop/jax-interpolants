@@ -88,7 +88,7 @@ def get_config(
         "num_blocks": 3,
         "attn_resolutions": [16, 8],
         "use_fourier": False,
-        "block_kwargs": {"dropout": 0.13, "use_song_normalization": False},
+        "block_kwargs": {"dropout": 0.13},
     }
 
     return config
