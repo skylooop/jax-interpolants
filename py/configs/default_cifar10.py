@@ -49,10 +49,11 @@ def get_config(
     config.optimization.bs = 128
     config.optimization.learning_rate = 1e-3
     config.optimization.clip = 10.0
-    config.optimization.total_samples = 200_000_000
-    config.optimization.total_steps = int(
-        config.optimization.total_samples // config.optimization.global_bs
+    config.optimization.total_steps = 200_000_000
+    config.optimization.total_samples = (
+        config.optimization.bs * config.optimization.total_steps
     )
+
     config.optimization.decay_steps = 35000
     config.optimization.schedule_type = "sqrt"
 
