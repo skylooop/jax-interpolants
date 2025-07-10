@@ -1,0 +1,7 @@
+name: jax-interpolants
+dependencies:
+  - python=3.9
+  - numpy
+  - scipy
+  - matplotlib
+  - seaborn
