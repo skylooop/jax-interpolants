@@ -30,7 +30,7 @@ conda env activate jax-interpolants
 
 # Examples
 
-The folder ``py/configs`` contains some default configurations that should *just work* for the two-dimensional checker dataset, MNIST, and CIFAR-10. Running one of these examples is simple -- just run:
+The folder ``py/configs`` contains some default configurations that should *just work* for the two-dimensional checker dataset, MNIST, and CIFAR-10. Launching one of these examples is simple -- just run:
 
 ``` python
 python py/launchers/learn.py \
