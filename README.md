@@ -22,6 +22,12 @@ Then install the required packages using the included ``requirements.txt`` file:
 pip install -r requirements.txt
 ```
 
+Then activate the conda environment to run some of the example
+
+```sh
+conda env activate jax-interpolants
+```
+
 # Examples
 
 ``py/configs`` contains some default configurations that should *just work* for the two-dimensional checker dataset, MNIST, and CIFAR-10. Usage of one of these examples is simple. Simply run
