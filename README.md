@@ -1,6 +1,6 @@
-# jax-interpolants
-
 ![wandb](imgs/mnist_wandb.png)
+
+# jax-interpolants
 
 Interested in generative modeling? Love flow matching, stochastic interpolants, and diffusion models, but can't find a good ``jax`` implementation? This repository contains a clean, efficient, and customizable implementation of the stochastic interpolant framework in ``jax`` and ``flax``. 
 
