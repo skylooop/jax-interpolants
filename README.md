@@ -8,6 +8,20 @@ The codebase uses the [jax-edm2](https://github.com/nmboffi/jax-edm2) neural net
 
 The repository layout is simple. ``py/common`` contains simple libraries useful for the training loop. ``py/launchers/learn.py`` contains the main training loop. ``py/launchers/matplotlibrc`` contains some really nice defaults for beautiful plots (turn on ``text.usetex`` to make this extra-beautiful). 
 
+# Installation
+
+First create a ``conda`` enviroment using the included ``environment.yml`` file:
+
+``` sh
+conda env create -f environment.yml
+```
+
+Then install the required packages using the included ``requirements.txt`` file:
+
+```sh
+pip install -r requirements.txt
+```
+
 # Examples
 
 ``py/configs`` contains some default configurations that should *just work* for the two-dimensional checker dataset, MNIST, and CIFAR-10. Usage of one of these examples is simple. Simply run
