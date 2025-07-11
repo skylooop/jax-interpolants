@@ -22,7 +22,7 @@ Then install the required packages using the included ``requirements.txt`` file:
 pip install -r requirements.txt
 ```
 
-Then activate the conda environment to run some of the example
+  * [ ] Then activate the ``conda`` environment to run some of the examples:
 
 ```sh
 conda env activate jax-interpolants
