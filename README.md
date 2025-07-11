@@ -10,7 +10,7 @@ The repository layout is simple. ``py/common`` contains simple libraries useful 
 
 # Installation
 
-First create a ``conda`` enviroment using the included ``environment.yml`` file:
+First create a ``conda`` environment using the included ``environment.yml`` file:
 
 ``` sh
 conda env create -f environment.yml
