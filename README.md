@@ -1,4 +1,4 @@
-![wandb](imgs/mnist_wandb.png)
+![transport_path](imgs/transport_path.png)
 
 # jax-interpolants
 
