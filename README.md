@@ -16,17 +16,19 @@ First create a ``conda`` environment using the included ``environment.yml`` file
 conda env create -f environment.yml
 ```
 
+Then activate the ``conda`` environment:
+
+```sh
+conda env activate jax-interpolants
+```
+
 Then install the required packages using the included ``requirements.txt`` file:
 
 ```sh
 pip install -r requirements.txt
 ```
 
-Then activate the ``conda`` environment to run some of the examples:
-
-```sh
-conda env activate jax-interpolants
-```
+You're now ready to run an example!
 
 # Examples
 
