@@ -18,21 +18,21 @@ from ml_collections import config_dict
 
 
 def safe_index(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
-    if cfg.training.ndevices > 1:
+    if cfg.training.local_ndevices > 1:
         return x[0]
     else:
         return x
 
 
 def safe_replicate(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
-    if cfg.training.ndevices > 1:
+    if cfg.training.local_ndevices > 1:
         return replicate(x)
     else:
         return x
 
 
 def safe_unreplicate(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
-    if cfg.training.ndevices > 1:
+    if cfg.training.local_ndevices > 1:
         return unreplicate(x)
     else:
         return x
@@ -40,14 +40,14 @@ def safe_unreplicate(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
 
 def replicate_batch(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
     """Replicate the batch for data parallelism."""
-    if cfg.training.ndevices > 1 and x is not None:
+    if cfg.training.local_ndevices > 1 and x is not None:
         x = x.reshape((cfg.training.local_ndevices, -1, *x.shape[1:]))
     return x
 
 
 def unreplicate_batch(cfg: config_dict.ConfigDict, x: Any) -> jnp.ndarray:
     """Unreplicate the batch for data parallelism."""
-    if cfg.training.ndevices > 1 and x is not None:
+    if cfg.training.local_ndevices > 1 and x is not None:
         x = x.reshape((-1, *x.shape[2:]))
     return x
 

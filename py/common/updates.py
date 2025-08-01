@@ -20,7 +20,7 @@ Parameters = dict[str, dict]
 def setup_train_step(cfg: config_dict.ConfigDict) -> Callable:
     """Setup the training step function for single or multi-device training."""
 
-    if cfg.training.ndevices > 1:
+    if cfg.training.local_ndevices > 1:
         decorator = lambda f: jax.pmap(
             f,
             in_axes=(0, None, 0),
@@ -45,7 +45,7 @@ def setup_train_step(cfg: config_dict.ConfigDict) -> Callable:
         """
         loss_value, grads = value_and_grad(loss_func)(state.params, *loss_func_args)
 
-        if cfg.training.ndevices > 1:
+        if cfg.training.local_ndevices > 1:
             loss_value = jax.lax.pmean(loss_value, axis_name="data")
             grads = jax.lax.pmean(grads, axis_name="data")
 
@@ -64,7 +64,7 @@ def setup_ema_update(
 ) -> Callable:
     """Setup the function for updating the EMA parameters on single or multiple devices."""
 
-    decorator = jax.jit if cfg.training.ndevices == 1 else jax.pmap
+    decorator = jax.jit if cfg.training.local_ndevices == 1 else jax.pmap
 
     @decorator
     def update_ema_params(

@@ -12,6 +12,10 @@ import sys
 import jax
 import wandb
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 py_dir = os.path.join(script_dir, "..")
 sys.path.append(py_dir)
@@ -45,7 +49,7 @@ def train_loop(
 ) -> None:
     """Carry out the training loop."""
 
-    pbar = tqdm(range(cfg.optimization.total_steps))
+    pbar = tqdm(range(cfg.optimization.total_steps), dynamic_ncols=True, smoothing=0.1, colour='green')
     for _ in pbar:
         # log gradient step time
         start_time = time.time()
@@ -160,6 +164,7 @@ if __name__ == "__main__":
     print("Setting up wandb.")
     if jax.process_index() == 0:
         wandb.init(
+            # mode='offline',
             project=cfg.logging.wandb_project,
             entity=cfg.logging.wandb_entity,
             name=cfg.logging.wandb_name,

@@ -11,7 +11,6 @@ import ml_collections
 def get_config(
     slurm_id: int, dataset_location: str, output_folder: str, wandb_entity: str
 ) -> ml_collections.ConfigDict:
-    # ensure jax.device_count works (weird issue with importlib)
     import jax
 
     # setup overall config
@@ -27,7 +26,7 @@ def get_config(
     config.training.tmax = 1.0
     config.training.seed = 42
     config.training.ema_facs = [0.999, 0.9999]
-    config.training.ndevices = jax.device_count()
+    config.training.local_ndevices = jax.device_count()
     config.training.n_nodes = jax.process_count()
 
     # problem config
@@ -44,7 +43,7 @@ def get_config(
 
     # optimization config
     config.optimization = ml_collections.ConfigDict()
-    config.optimization.bs = 64000
+    config.optimization.bs = 1024
     config.optimization.learning_rate = 1e-3
     config.optimization.clip = 5.0
     config.optimization.total_steps = 500_000
@@ -57,7 +56,7 @@ def get_config(
     # logging config
     config.logging = ml_collections.ConfigDict()
     config.logging.plot_bs = 25000
-    config.logging.visual_freq = 5000
+    config.logging.visual_freq = 2000
     config.logging.save_freq = config.optimization.total_steps // 50
     config.logging.wandb_project = "jax-interpolants-debug"
     config.logging.wandb_name = "checker-debug"

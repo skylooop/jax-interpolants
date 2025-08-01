@@ -14,6 +14,7 @@ from flax.serialization import to_bytes
 from jax.flatten_util import ravel_pytree
 from matplotlib import pyplot as plt
 from ml_collections import config_dict
+from flax.jax_utils import unreplicate
 
 from . import datasets, dist_utils, samplers, state_utils
 
@@ -108,7 +109,7 @@ def make_lowd_plot(
     for kk, step in enumerate(steps):
         xhats[kk] = samplers.batch_sample(
             train_state.apply_fn,
-            train_state.params,
+            unreplicate(train_state.params) if jax.local_device_count() > 0 else train_state.params,
             x0s,
             step,
             -jnp.ones(cfg.logging.plot_bs),
@@ -161,8 +162,9 @@ def make_lowd_plot(
                 marker="o",
                 c="black",
             )
-
+    plt.savefig(f"{cfg.logging.output_folder}/samples.jpg")
     wandb.log({"samples": wandb.Image(fig)})
+    plt.close(fig)
     return prng_key
 
 
@@ -330,5 +332,7 @@ def make_loss_fn_args_plot(
                 ax.scatter(tbatch, tbatch, s=0.1, alpha=0.5, marker="o")
         else:
             ax.scatter(tbatch, tbatch, s=0.1, alpha=0.5, marker="o")
-
-    wandb.log({"loss_fn_args": wandb.Image(fig)})
+    plt.savefig(f"{cfg.logging.output_folder}/loss_fn_args.jpg")
+    
+    wandb.log({"loss_fn_args": wandb.Image(f"{cfg.logging.output_folder}/loss_fn_args.jpg")})
+    plt.close(fig)
